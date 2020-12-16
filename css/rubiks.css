@@ -1,4 +1,4 @@
-.switches {
+.options-group {
   position: absolute;
   top: 15px;
   left: 20px;
@@ -15,7 +15,7 @@
   height: 23px;
 }
 
-.switch-block {
+.switch-block:not(:first-child) {
   margin-top: 5px;
 }
 
@@ -98,4 +98,37 @@ input:checked + .slider:before {
 /* Add a background color on hover */
 .btn-group button:hover {
   background-color: #0d3e62;
+}
+
+@font-face {
+  font-family: 'lemonmilk';
+  src: url('../fonts/LEMONMILK-Regular.otf');
+}
+
+#result {
+  position: absolute;
+  margin: auto;
+  top: 15px;
+  left: 0;
+  right: 0;
+  width: 70px;
+  color: black;
+  font-family: 'lemonmilk', Arial, sans-serif;
+  font-size: 60px;
+  cursor: default;
+  background-color: white;
+  border-radius: 2px;
+  text-align: center;
+}
+
+#result.hidden {
+  display: none;
+}
+
+#result.correct {
+  background-color: lawngreen;
+}
+
+#result.incorrect {
+  background-color: red;
 }

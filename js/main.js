@@ -5,6 +5,7 @@ let controls, renderer, scene, letter_font, camera;
 let lettersGroups;
 let nameToGuess = "";
 let letters_toggle = document.getElementsByClassName("letters-toggle");
+let result = document.getElementById("result");
 
 let manager = new THREE.LoadingManager();
 manager.onLoad = function() {
@@ -72,6 +73,7 @@ function randomLetter() {
 function clearRandomLetter() {
   scene.remove(lettersGroups["random"]);
   nameToGuess = "";
+  result.className = "hidden";
 }
 
 // Event Handler for Toggle Switches
@@ -83,11 +85,29 @@ for (let i = 0; i < letters_toggle.length; i++) {
     } else {
       scene.remove(letterGroup);
     }
-    clearRandomLetter();
   });
 }
 
 // Event Handler for Quiz
 document.getElementById("quiz").addEventListener("click", function () {
-  randomLetter();
+  if (nameToGuess) {
+    this.innerText = "Start Quiz";
+    clearRandomLetter();
+  } else {
+    this.innerText = "Stop Quiz";
+    randomLetter();
+  }
+});
+
+// Keypress
+document.addEventListener("keydown", function(event) {
+  if (nameToGuess && event.code.substring(0, 3) === 'Key' && event.code.length === 4) {
+    result.innerText = event.code.substring(3);
+    if (event.code === `Key${nameToGuess}`) {
+      result.className = 'correct';
+      randomLetter();
+    } else {
+      result.className = 'incorrect';
+    }
+  }
 });
