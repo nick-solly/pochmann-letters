@@ -121,7 +121,7 @@ input:checked + .slider:before {
   text-align: center;
 }
 
-#result.hidden {
+.hidden {
   display: none;
 }
 
@@ -131,4 +131,9 @@ input:checked + .slider:before {
 
 #result.incorrect {
   background-color: red;
+}
+
+#stats {
+  margin-top: 5px;
+  color: white;
 }

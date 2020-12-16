@@ -6,6 +6,8 @@ let lettersGroups;
 let nameToGuess = "";
 let letters_toggle = document.getElementsByClassName("letters-toggle");
 let result = document.getElementById("result");
+let stats = document.getElementById("stats");
+let score = [0, 0];
 
 let manager = new THREE.LoadingManager();
 manager.onLoad = function() {
@@ -93,9 +95,16 @@ document.getElementById("quiz").addEventListener("click", function () {
   if (nameToGuess) {
     this.innerText = "Start Quiz";
     clearRandomLetter();
+    // Hide Stats
+    stats.innerText = "";
+    stats.className = "hidden";
   } else {
     this.innerText = "Stop Quiz";
     randomLetter();
+    // Show Stats
+    score = [0, 0];
+    updateScore();
+    stats.className = "";
   }
 });
 
@@ -105,9 +114,25 @@ document.addEventListener("keydown", function(event) {
     result.innerText = event.code.substring(3);
     if (event.code === `Key${nameToGuess}`) {
       result.className = 'correct';
+      score[0] += 1;
       randomLetter();
     } else {
       result.className = 'incorrect';
+      score[1] += 1;
     }
+    updateScore();
   }
 });
+
+function updateScore() {
+  let correct = score[0];
+  let incorrect = score[1];
+  let total = correct + incorrect;
+  let percentage;
+  if (total > 0) {
+    percentage = Math.round((correct / total) * 100);
+  } else {
+    percentage = 0;
+  }
+  stats.innerText = `${correct} of ${total} correct (${percentage}%)`
+}
