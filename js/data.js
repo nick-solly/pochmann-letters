@@ -45,7 +45,7 @@ export const CUBE_FACE_EULERS = [
   new THREE.Euler(Math.PI / 2, 0, 0),
   new THREE.Euler(0, 0, 0),
   new THREE.Euler(0, Math.PI, 0),
-]
+];
 
 export const CUBE_FACE_NORMALS = [
   new THREE.Vector3(1, 0, 0),
@@ -54,7 +54,20 @@ export const CUBE_FACE_NORMALS = [
   new THREE.Vector3(0, -1, 0),
   new THREE.Vector3(0, 0, 1),
   new THREE.Vector3(0, 0, -1),
-]
+];
+
+// 4 * CUBE_EDGE_LENGTH, 4 * CUBE_EDGE_LENGTH, 6 * CUBE_EDGE_LENGTH
+// R, L, U, D, F, B
+export const CUBE_POSES = [
+  {x: 4 * CUBE_EDGE_LENGTH, y: 4 * CUBE_EDGE_LENGTH, z: 6 * CUBE_EDGE_LENGTH},  // R
+  {x: -4 * CUBE_EDGE_LENGTH, y: 4 * CUBE_EDGE_LENGTH, z: 6 * CUBE_EDGE_LENGTH},  // L
+  {x: -4 * CUBE_EDGE_LENGTH, y: 4 * CUBE_EDGE_LENGTH, z: 6 * CUBE_EDGE_LENGTH},  // U
+  {x: -4 * CUBE_EDGE_LENGTH, y: -4 * CUBE_EDGE_LENGTH, z: 6 * CUBE_EDGE_LENGTH},  // D
+  {x: -4 * CUBE_EDGE_LENGTH, y: 4 * CUBE_EDGE_LENGTH, z: 6 * CUBE_EDGE_LENGTH},  // F
+  {x: -4 * CUBE_EDGE_LENGTH, y: 4 * CUBE_EDGE_LENGTH, z: -6 * CUBE_EDGE_LENGTH},  // B
+];
+
+export const CUBE_STARTING_POSE = CUBE_POSES[4];
 
 export const CUBE_DATA = {
   // TOP LAYER

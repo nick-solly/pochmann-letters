@@ -114,5 +114,5 @@ export function getRandomLetterGroup(letter_font) {
   while (name == "")
   console.log(name, cubeID, cubeFace);
   letters.add(Letter(letter_font, "?", cubePosition, cubeFace, "random"));
-  return [letters, name];
+  return [letters, name, cubeFace];
 }

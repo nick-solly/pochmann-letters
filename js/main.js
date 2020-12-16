@@ -1,4 +1,4 @@
-import {CUBE_EDGE_LENGTH} from "./data.js";
+import {CUBE_POSES, CUBE_STARTING_POSE} from "./data.js";
 import {getCubeGroup, getLettersGroup, getRandomLetterGroup} from "./rubiks.js";
 
 let controls, renderer, scene, letter_font, camera;
@@ -36,7 +36,7 @@ function init() {
   }
 
   // Set Camera
-  camera.position.set(4 * CUBE_EDGE_LENGTH, 4 * CUBE_EDGE_LENGTH, 6 * CUBE_EDGE_LENGTH);
+  camera.position.set(CUBE_STARTING_POSE.x, CUBE_STARTING_POSE.y, CUBE_STARTING_POSE.z);
   camera.lookAt(new THREE.Vector3(0, 0, 0));
 
   // Add Orbit Controls
@@ -47,6 +47,7 @@ function init() {
 function animate() {
   requestAnimationFrame(animate);
   controls.update();
+  TWEEN.update();
   renderer.render(scene, camera);
 }
 
@@ -59,10 +60,13 @@ function randomLetter() {
   for (const [groupName, group] of Object.entries(lettersGroups)) {
     scene.remove(group);
   }
-  let group;
-  [group, nameToGuess] = getRandomLetterGroup(letter_font);
+  let group, cubeFace;
+  [group, nameToGuess, cubeFace] = getRandomLetterGroup(letter_font);
   lettersGroups["random"] = group
   scene.add(lettersGroups["random"]);
+
+  // Camera Move
+  new TWEEN.Tween(camera.position).to(CUBE_POSES[cubeFace], 500).start();
 }
 
 function clearRandomLetter() {
