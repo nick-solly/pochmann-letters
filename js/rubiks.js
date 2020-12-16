@@ -99,3 +99,20 @@ function Letter(letter_font, name, cubePosition, cubeFace, cubieType) {
   letter.setRotationFromEuler(CUBE_FACE_EULERS[cubeFace]);
   return letter;
 }
+
+export function getRandomLetterGroup(letter_font) {
+ let letters = new THREE.Group();
+ let cubeIDs = Object.keys(CUBE_DATA);
+ let cubeID, cubePosition, cubeFace;
+  let name = "";
+  do {
+    cubeID = cubeIDs[Math.floor(Math.random() * cubeIDs.length)];
+    cubePosition = CUBE_DATA[cubeID].position;
+    cubeFace = Math.floor(Math.random() * 6);
+    name = CUBE_DATA[cubeID].names[cubeFace];
+  }
+  while (name == "")
+  console.log(name, cubeID, cubeFace);
+  letters.add(Letter(letter_font, "?", cubePosition, cubeFace, "random"));
+  return [letters, name];
+}

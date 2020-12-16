@@ -26,23 +26,26 @@
   <body>
 
     <div class="switches">
-      <div class="switch_block">
+      <div class="switch-block">
         <label class="switch">
-          <input class="letters_toggle" data-lettergroup="corner" type="checkbox">
+          <input class="letters-toggle" data-lettergroup="corner" type="checkbox">
           <span class="slider round"></span>
         </label>
-        <span class="switch_text">
+        <span class="switch-text">
           Show Corner Labels
         </span>
       </div>
-      <div class="switch_block">
+      <div class="switch-block">
         <label class="switch">
-          <input class="letters_toggle" data-lettergroup="edge" type="checkbox">
+          <input class="letters-toggle" data-lettergroup="edge" type="checkbox">
           <span class="slider round"></span>
         </label>
-        <span class="switch_text">
+        <span class="switch-text">
           Show Edge Labels
         </span>
+      </div>
+      <div class="btn-group">
+        <button id="quiz">Quiz!</button>
       </div>
     </div>
 
@@ -52,10 +55,12 @@
     <script src="js/plugins.js"></script>
     <script type="module">
       import {CUBE_EDGE_LENGTH} from "./js/data.js";
-      import {getCubeGroup, getLettersGroup} from "./js/rubiks.js";
+      import {getCubeGroup, getLettersGroup, getRandomLetterGroup} from "./js/rubiks.js";
 
       let controls, renderer, scene, letter_font, camera;
       let lettersGroups;
+      let nameToGuess = "";
+      let letters_toggle = document.getElementsByClassName("letters-toggle");
 
       let manager = new THREE.LoadingManager();
       manager.onLoad = function() {
@@ -83,6 +88,7 @@
         lettersGroups = {
           "corner": getLettersGroup(letter_font, "corner"),
           "edge": getLettersGroup(letter_font, "edge"),
+          "random": new THREE.Group(),
         }
 
         // Set Camera
@@ -100,8 +106,27 @@
         renderer.render(scene, camera);
       }
 
+      function randomLetter() {
+        // Turn off letter switches
+        for (let i = 0; i < letters_toggle.length; i++) {
+          letters_toggle[i].checked = false;
+        }
+        // Remove all existing letters
+        for (const [groupName, group] of Object.entries(lettersGroups)) {
+          scene.remove(group);
+        }
+        let group;
+        [group, nameToGuess] = getRandomLetterGroup(letter_font);
+        lettersGroups["random"] = group
+        scene.add(lettersGroups["random"]);
+      }
+
+      function clearRandomLetter() {
+        scene.remove(lettersGroups["random"]);
+        nameToGuess = "";
+      }
+
       // Event Handler for Toggle Switches
-      let letters_toggle = document.getElementsByClassName("letters_toggle");
       for (let i = 0; i < letters_toggle.length; i++) {
         letters_toggle[i].addEventListener("change", function () {
           let letterGroup = lettersGroups[this.dataset.lettergroup];
@@ -110,8 +135,14 @@
           } else {
             scene.remove(letterGroup);
           }
+          clearRandomLetter();
         });
       }
+
+      // Event Handler for Quiz
+      document.getElementById("quiz").addEventListener("click", function () {
+        randomLetter();
+      });
 
     </script>
 
