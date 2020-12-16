@@ -12,25 +12,107 @@
     <meta property="og:url" content="">
     <meta property="og:image" content="">
 
-    <link rel="manifest" href="site.webmanifest">
+<!--    <link rel="manifest" href="site.webmanifest">-->
     <link rel="apple-touch-icon" href="icon.png">
     <!-- Place favicon.ico in the root directory -->
 
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/rubiks.css">
 
     <meta name="theme-color" content="#fafafa">
   </head>
 
   <body>
 
+    <div class="switches">
+      <div class="switch_block">
+        <label class="switch">
+          <input class="letters_toggle" data-lettergroup="corner" type="checkbox">
+          <span class="slider round"></span>
+        </label>
+        <span class="switch_text">
+          Show Corner Labels
+        </span>
+      </div>
+      <div class="switch_block">
+        <label class="switch">
+          <input class="letters_toggle" data-lettergroup="edge" type="checkbox">
+          <span class="slider round"></span>
+        </label>
+        <span class="switch_text">
+          Show Edge Labels
+        </span>
+      </div>
+    </div>
+
     <script src="js/vendor/modernizr-3.11.2.min.js"></script>
     <script src="https://unpkg.com/three@0.123.0/build/three.js"></script>
     <script src="https://unpkg.com/three@0.123.0/examples/js/controls/OrbitControls.js"></script>
     <script src="js/plugins.js"></script>
-    <script src="js/data.js"></script>
-    <script src="js/rubiks.js"></script>
-    <script src="js/main.js"></script>
+    <script type="module">
+      import {CUBE_EDGE_LENGTH} from "./js/data.js";
+      import {getCubeGroup, getLettersGroup} from "./js/rubiks.js";
+
+      let controls, renderer, scene, letter_font, camera;
+      let lettersGroups;
+
+      let manager = new THREE.LoadingManager();
+      manager.onLoad = function() {
+        init();
+        animate();
+      }
+
+      const loader = new THREE.FontLoader(manager);
+      loader.load('fonts/LEMON MILK_Regular.json', function (font) {
+        letter_font = font;
+      });
+
+      function init() {
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Add Objects
+        let cubeGroup = getCubeGroup();
+        scene.add(cubeGroup);
+
+        // Get Label Groups but don't add to scene
+        lettersGroups = {
+          "corner": getLettersGroup(letter_font, "corner"),
+          "edge": getLettersGroup(letter_font, "edge"),
+        }
+
+        // Set Camera
+        camera.position.set(4 * CUBE_EDGE_LENGTH, 4 * CUBE_EDGE_LENGTH, 6 * CUBE_EDGE_LENGTH);
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+        // Add Orbit Controls
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.update();
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+      }
+
+      let letters_toggle = document.getElementsByClassName("letters_toggle");
+      for (let i = 0; i < letters_toggle.length; i++) {
+        letters_toggle[i].addEventListener("change", function () {
+          let letterGroup = lettersGroups[this.dataset.lettergroup];
+          if (this.checked) {
+            scene.add(letterGroup);
+          } else {
+            scene.remove(letterGroup);
+          }
+        });
+      }
+
+    </script>
 
     <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
     <script>

@@ -1,8 +1,11 @@
+import {CUBE_LETTER_COLOR, CUBE_DATA, CUBE_EDGE_LENGTH, CUBE_FACE_EULERS, CUBE_FACE_NORMALS} from "./data.js";
 
-function populateScene(scene) {
+export function getCubeGroup() {
+  let cubies = new THREE.Group();
   for (const [cubeID, cubeData] of Object.entries(CUBE_DATA)) {
-    addCubie(scene, cubeData);
+    cubies.add(Cubie(cubeID, cubeData));
   }
+  return cubies;
 }
 
 var vertexShader = `
@@ -12,6 +15,7 @@ var vertexShader = `
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
     }
   `;
+
 var fragmentShader = `
     varying vec3 vPos;
     uniform vec3 size;
@@ -31,15 +35,13 @@ var fragmentShader = `
     }
   `;
 
-function addCubie(scene, cubeData) {
+
+function Cubie(cubeID, cubeData) {
 
   let geo_cube = new THREE.BoxBufferGeometry(CUBE_EDGE_LENGTH, CUBE_EDGE_LENGTH, CUBE_EDGE_LENGTH);
 
-
   let materials = []
   for (let i=0; i < cubeData.colors.length; i++) {
-    // let material = new THREE.MeshBasicMaterial({color: cubeData.colors[i]});
-
     let material = new THREE.ShaderMaterial({
       uniforms: {
         size: {
@@ -56,19 +58,44 @@ function addCubie(scene, cubeData) {
       vertexShader: vertexShader,
       fragmentShader: fragmentShader
     });
-
     materials.push(material);
   }
 
   let cube = new THREE.Mesh(geo_cube, materials);
-  scene.add(cube);
-  cube.position.copy(cubeData.position.multiplyScalar(CUBE_EDGE_LENGTH));
-
-  // EDGES
-  // const geo_edges = new THREE.EdgesGeometry(geo_cube);
-  // let edges = new THREE.LineSegments(geo_edges, new THREE.LineBasicMaterial({color:0x000000, linewidth: 2}))
-  // scene.add(edges);
-  // edges.position.copy(cubeData.position);
-
+  cube.name = cubeID;
+  cube.position.copy(cubeData.position);
+  return cube;
 }
 
+export function getLettersGroup(letter_font, selectedCubieType) {
+  let letters = new THREE.Group();
+  let name;
+  let cubieType;
+  for (const [cubeID, cubeData] of Object.entries(CUBE_DATA)) {
+    cubieType = cubeData.type;
+    for (let i = 0; i < cubeData.names.length; i++) {
+      name = cubeData.names[i];
+      if (name) {
+        if (cubieType === selectedCubieType) {
+          letters.add(Letter(letter_font, name, cubeData.position, i, cubieType));
+        }
+      }
+    }
+  }
+  return letters;
+}
+
+function Letter(letter_font, name, cubePosition, cubeFace, cubieType) {
+  let geo_text = new THREE.TextGeometry(name, {
+    font: letter_font,
+    size: CUBE_EDGE_LENGTH * 0.5,
+    height: 0.2,
+  });
+  geo_text.center();
+  let letter = new THREE.Mesh(geo_text, new THREE.MeshBasicMaterial({color: CUBE_LETTER_COLOR}));
+  letter.name = `${cubieType}${name}`;
+  letter.position.copy(cubePosition);
+  letter.translateOnAxis(CUBE_FACE_NORMALS[cubeFace], CUBE_EDGE_LENGTH * 0.5);
+  letter.setRotationFromEuler(CUBE_FACE_EULERS[cubeFace]);
+  return letter;
+}

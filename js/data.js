@@ -25,128 +25,201 @@
 // | 24 | 25 | 26 |
 // *----*----*----*
 
-// Color Definition runs R, L, U, D, F, B (normal Rubik's Notation)
+// Face definition runs R, L, U, D, F, B (normal Rubik's Notation)
 
-const CUBE_BLACK = "black";
-const CUBE_WHITE = "white";
-const CUBE_YELLOW = "yellow";
-const CUBE_GREEN = "green";
-const CUBE_BLUE = "blue";
-const CUBE_RED = "red";
-const CUBE_ORANGE = "orange";
+const CUBE_BLACK = "#000000";
+const CUBE_WHITE = "#FFFFFF";
+const CUBE_YELLOW = "#FFFF00";
+const CUBE_GREEN = "#008000";
+const CUBE_BLUE = "#0000FF";
+const CUBE_RED = "#FF0000";
+const CUBE_ORANGE = "#FFA500";
+export const CUBE_LETTER_COLOR = "#000000";
 
-const CUBE_EDGE_LENGTH = 5;
+export const CUBE_EDGE_LENGTH = 5;
 
-const CUBE_DATA = {
+export const CUBE_FACE_EULERS = [
+  new THREE.Euler(0, Math.PI / 2, 0),
+  new THREE.Euler(0, -Math.PI / 2, 0),
+  new THREE.Euler(-Math.PI / 2, 0, 0),
+  new THREE.Euler(Math.PI / 2, 0, 0),
+  new THREE.Euler(0, 0, 0),
+  new THREE.Euler(0, Math.PI, 0),
+]
+
+export const CUBE_FACE_NORMALS = [
+  new THREE.Vector3(1, 0, 0),
+  new THREE.Vector3(-1, 0, 0),
+  new THREE.Vector3(0, 1, 0),
+  new THREE.Vector3(0, -1, 0),
+  new THREE.Vector3(0, 0, 1),
+  new THREE.Vector3(0, 0, -1),
+]
+
+export const CUBE_DATA = {
   // TOP LAYER
   0: {
-    position: new THREE.Vector3(-1, 1, -1),
+    type: "corner",
+    position: new THREE.Vector3(-1, 1, -1).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_BLACK, CUBE_ORANGE, CUBE_WHITE, CUBE_BLACK, CUBE_BLACK, CUBE_BLUE],
+    names: ["", "E", "A", "", "", "R"],
   },
   1: {
-    position: new THREE.Vector3(0, 1, -1),
+    type: "edge",
+    position: new THREE.Vector3(0, 1, -1).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_BLACK, CUBE_BLACK, CUBE_WHITE, CUBE_BLACK, CUBE_BLACK, CUBE_BLUE],
+    names: ["", "", "A", "", "", "Q"],
   },
   2: {
-    position: new THREE.Vector3(1, 1, -1),
+    type: "corner",
+    position: new THREE.Vector3(1, 1, -1).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_RED, CUBE_BLACK, CUBE_WHITE, CUBE_BLACK, CUBE_BLACK, CUBE_BLUE],
+    names: ["N", "", "B", "", "", "Q"],
   },
   3: {
-    position: new THREE.Vector3(-1, 1, 0),
+    type: "edge",
+    position: new THREE.Vector3(-1, 1, 0).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_BLACK, CUBE_ORANGE, CUBE_WHITE, CUBE_BLACK, CUBE_BLACK, CUBE_BLACK],
+    names: ["", "E", "D", "", "", ""],
   },
   4: {
-    position: new THREE.Vector3(0, 1, 0),
+    type: "center",
+    position: new THREE.Vector3(0, 1, 0).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_BLACK, CUBE_BLACK, CUBE_WHITE, CUBE_BLACK, CUBE_BLACK, CUBE_BLACK],
+    names: ["", "", "", "", "", ""],
   },
   5: {
-    position: new THREE.Vector3(1, 1, 0),
+    type: "edge",
+    position: new THREE.Vector3(1, 1, 0).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_RED, CUBE_BLACK, CUBE_WHITE, CUBE_BLACK, CUBE_BLACK, CUBE_BLACK],
+    names: ["M", "", "B", "", "", ""],
   },
   6: {
-    position: new THREE.Vector3(-1, 1, 1),
+    type: "corner",
+    position: new THREE.Vector3(-1, 1, 1).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_BLACK, CUBE_ORANGE, CUBE_WHITE, CUBE_BLACK, CUBE_GREEN, CUBE_BLACK],
+    names: ["", "F", "D", "", "I", ""],
   },
   7: {
-    position: new THREE.Vector3(0, 1, 1),
+    type: "edge",
+    position: new THREE.Vector3(0, 1, 1).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_BLACK, CUBE_BLACK, CUBE_WHITE, CUBE_BLACK, CUBE_GREEN, CUBE_BLACK],
+    names: ["", "", "C", "", "I", ""],
   },
   8: {
-    position: new THREE.Vector3(1, 1, 1),
+    type: "corner",
+    position: new THREE.Vector3(1, 1, 1).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_RED, CUBE_BLACK, CUBE_WHITE, CUBE_BLACK, CUBE_GREEN, CUBE_BLACK],
+    names: ["M", "", "C", "", "J", ""],
   },
   // MIDDLE SLICE
   9: {
-    position: new THREE.Vector3(-1, 0, -1),
+    type: "edge",
+    position: new THREE.Vector3(-1, 0, -1).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_BLACK, CUBE_ORANGE, CUBE_BLACK, CUBE_BLACK, CUBE_BLACK, CUBE_BLUE],
+    names: ["", "H", "", "", "", "R"],
   },
   10: {
-    position: new THREE.Vector3(0, 0, -1),
+    type: "center",
+    position: new THREE.Vector3(0, 0, -1).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_BLACK, CUBE_BLACK, CUBE_BLACK, CUBE_BLACK, CUBE_BLACK, CUBE_BLUE],
+    names: ["", "", "", "", "", ""],
   },
   11: {
-    position: new THREE.Vector3(1, 0, -1),
+    type: "edge",
+    position: new THREE.Vector3(1, 0, -1).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_RED, CUBE_BLACK, CUBE_BLACK, CUBE_BLACK, CUBE_BLACK, CUBE_BLUE],
+    names: ["N", "", "", "", "", "T"],
   },
   12: {
-    position: new THREE.Vector3(-1, 0, 0),
+    type: "center",
+    position: new THREE.Vector3(-1, 0, 0).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_BLACK, CUBE_ORANGE, CUBE_BLACK, CUBE_BLACK, CUBE_BLACK, CUBE_BLACK],
+    names: ["", "", "", "", "", ""],
   },
   13: {
-    position: new THREE.Vector3(0, 0, 0),
+    type: "core",
+    position: new THREE.Vector3(0, 0, 0).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_BLACK, CUBE_BLACK, CUBE_BLACK, CUBE_BLACK, CUBE_BLACK, CUBE_BLACK],
+    names: ["", "", "", "", "", ""],
   },
   14: {
-    position: new THREE.Vector3(1, 0, 0),
+    type: "center",
+    position: new THREE.Vector3(1, 0, 0).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_RED, CUBE_BLACK, CUBE_BLACK, CUBE_BLACK, CUBE_BLACK, CUBE_BLACK],
+    names: ["", "", "", "", "", ""],
   },
   15: {
-    position: new THREE.Vector3(-1, 0, 1),
+    type: "edge",
+    position: new THREE.Vector3(-1, 0, 1).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_BLACK, CUBE_ORANGE, CUBE_BLACK, CUBE_BLACK, CUBE_GREEN, CUBE_BLACK],
+    names: ["", "F", "", "", "L", ""],
   },
   16: {
-    position: new THREE.Vector3(0, 0, 1),
+    type: "center",
+    position: new THREE.Vector3(0, 0, 1).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_BLACK, CUBE_BLACK, CUBE_BLACK, CUBE_BLACK, CUBE_GREEN, CUBE_BLACK],
+    names: ["", "", "", "", "", ""],
   },
   17: {
-    position: new THREE.Vector3(1, 0, 1),
+    type: "edge",
+    position: new THREE.Vector3(1, 0, 1).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_RED, CUBE_BLACK, CUBE_BLACK, CUBE_BLACK, CUBE_GREEN, CUBE_BLACK],
+    names: ["P", "", "", "", "J", ""],
   },
   // BOTTOM LAYER
   18: {
-    position: new THREE.Vector3(-1, -1, -1),
+    type: "corner",
+    position: new THREE.Vector3(-1, -1, -1).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_BLACK, CUBE_ORANGE, CUBE_BLACK, CUBE_YELLOW, CUBE_BLACK, CUBE_BLUE],
+    names: ["", "H", "", "X", "", "S"],
   },
   19: {
-    position: new THREE.Vector3(0, -1, -1),
+    type: "edge",
+    position: new THREE.Vector3(0, -1, -1).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_BLACK, CUBE_BLACK, CUBE_BLACK, CUBE_YELLOW, CUBE_BLACK, CUBE_BLUE],
+    names: ["", "", "", "W", "", "S"],
   },
   20: {
-    position: new THREE.Vector3(1, -1, -1),
+    type: "corner",
+    position: new THREE.Vector3(1, -1, -1).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_RED, CUBE_BLACK, CUBE_BLACK, CUBE_YELLOW, CUBE_BLACK, CUBE_BLUE],
+    names: ["O", "", "", "W", "", "T"],
   },
   21: {
-    position: new THREE.Vector3(-1, -1, 0),
+    type: "edge",
+    position: new THREE.Vector3(-1, -1, 0).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_BLACK, CUBE_ORANGE, CUBE_BLACK, CUBE_YELLOW, CUBE_BLACK, CUBE_BLACK],
+    names: ["", "G", "", "X", "", ""],
   },
   22: {
-    position: new THREE.Vector3(0, -1, 0),
+    type: "center",
+    position: new THREE.Vector3(0, -1, 0).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_BLACK, CUBE_BLACK, CUBE_BLACK, CUBE_YELLOW, CUBE_BLACK, CUBE_BLACK],
+    names: ["", "", "", "", "", ""],
   },
   23: {
-    position: new THREE.Vector3(1, -1, 0),
+    type: "edge",
+    position: new THREE.Vector3(1, -1, 0).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_RED, CUBE_BLACK, CUBE_BLACK, CUBE_YELLOW, CUBE_BLACK, CUBE_BLACK],
+    names: ["O", "", "", "V", "", ""],
   },
   24: {
-    position: new THREE.Vector3(-1, -1, 1),
+    type: "corner",
+    position: new THREE.Vector3(-1, -1, 1).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_BLACK, CUBE_ORANGE, CUBE_BLACK, CUBE_YELLOW, CUBE_GREEN, CUBE_BLACK],
+    names: ["", "G", "", "U", "L", ""],
   },
   25: {
-    position: new THREE.Vector3(0, -1, 1),
+    type: "edge",
+    position: new THREE.Vector3(0, -1, 1).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_BLACK, CUBE_BLACK, CUBE_BLACK, CUBE_YELLOW, CUBE_GREEN, CUBE_BLACK],
+    names: ["", "", "", "U", "K", ""],
   },
   26: {
-    position: new THREE.Vector3(1, -1, 1),
+    type: "corner",
+    position: new THREE.Vector3(1, -1, 1).multiplyScalar(CUBE_EDGE_LENGTH),
     colors: [CUBE_RED, CUBE_BLACK, CUBE_BLACK, CUBE_YELLOW, CUBE_GREEN, CUBE_BLACK],
+    names: ["P", "", "", "V", "K", ""],
   },
 };
