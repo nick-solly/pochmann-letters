@@ -1,4 +1,11 @@
-import {CUBE_LETTER_COLOR, CUBE_DATA, CUBE_EDGE_LENGTH, CUBE_FACE_EULERS, CUBE_FACE_NORMALS} from "./data.js";
+import {
+  CUBE_LETTER_COLOR,
+  CUBE_DATA,
+  CUBE_EDGE_LENGTH,
+  CUBE_FACE_EULERS,
+  CUBE_FACE_NORMALS,
+  guessList,
+} from "./data.js";
 
 export function getCubeGroup() {
   let cubies = new THREE.Group();
@@ -73,11 +80,11 @@ export function getLettersGroup(letter_font, selectedCubieType) {
   let cubieType;
   for (const [cubeID, cubeData] of Object.entries(CUBE_DATA)) {
     cubieType = cubeData.type;
-    for (let i = 0; i < cubeData.names.length; i++) {
-      name = cubeData.names[i];
+    for (let cubeFace = 0; cubeFace < cubeData.names.length; cubeFace++) {
+      name = cubeData.names[cubeFace];
       if (name) {
         if (cubieType === selectedCubieType) {
-          letters.add(Letter(letter_font, name, cubeData.position, i, cubieType));
+          letters.add(Letter(letter_font, name, cubeData.position, cubeFace, cubieType));
         }
       }
     }
@@ -100,19 +107,34 @@ function Letter(letter_font, name, cubePosition, cubeFace, cubieType) {
   return letter;
 }
 
+// function weightedRandom() {
+//   // Simple Random
+//   // return guessList[Math.floor(Math.random() * guessList.length)];
+//
+//   // Weighted Random
+//   // https://blobfolio.com/2019/randomizing-weighted-choices-in-javascript/
+//
+//   let total = 1;
+//   for (let i = 0; i < guessList.length; ++i) {
+//     total += guessList[i].weighting;
+//   }
+//
+//   const threshold = Math.floor(Math.random() * total);
+//
+//   total = 0;
+//   for (let i = 0; i < guessList.length; ++i) {
+//     total += guessList[i].weighting;
+//     if (total >= threshold) {
+//       return guessList[i];
+//     }
+//   }
+//
+// }
+
 export function getRandomLetterGroup(letter_font) {
- let letters = new THREE.Group();
- let cubeIDs = Object.keys(CUBE_DATA);
- let cubeID, cubePosition, cubeFace;
-  let name = "";
-  do {
-    cubeID = cubeIDs[Math.floor(Math.random() * cubeIDs.length)];
-    cubePosition = CUBE_DATA[cubeID].position;
-    cubeFace = Math.floor(Math.random() * 6);
-    name = CUBE_DATA[cubeID].names[cubeFace];
-  }
-  while (name == "")
-  console.log(name, cubeID, cubeFace);
-  letters.add(Letter(letter_font, "?", cubePosition, cubeFace, "random"));
-  return [letters, name, cubeFace];
+  let letters = new THREE.Group();
+  let randomLetter = guessList[Math.floor(Math.random() * guessList.length)];
+  console.log(randomLetter.name, randomLetter.cubeID, randomLetter.cubeFace);
+  letters.add(Letter(letter_font, "?", randomLetter.cubePosition, randomLetter.cubeFace, "random"));
+  return [letters, randomLetter.name, randomLetter.cubeFace];
 }

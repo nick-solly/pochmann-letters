@@ -236,3 +236,22 @@ export const CUBE_DATA = {
     names: ["P", "", "", "V", "K", ""],
   },
 };
+
+export let guessList = [];
+for (const [cubeID, cubeData] of Object.entries(CUBE_DATA)) {
+  for (let cubeFace = 0; cubeFace < cubeData.names.length; cubeFace++) {
+    name = cubeData.names[cubeFace];
+    if (name) {
+      guessList.push(
+        {
+          // weighting: 1,
+          name: name,
+          cubeID: cubeID,
+          cubeFace: cubeFace,
+          cubePosition: cubeData.position,
+          type: cubeData.type,
+        }
+      )
+    }
+  }
+}
