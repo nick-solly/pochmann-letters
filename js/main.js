@@ -1,25 +1,29 @@
-import {CUBE_POSES, CUBE_STARTING_POSE} from "./data.js";
-import {initialCube, getLettersGroup, getRandomLetterGroup} from "./rubiks.js";
+import {CUBE_DATA, CUBE_STARTING_POSE, CUBIE_DATA, TURN_ANGLES, TURN_CUBIE_SWAPS} from "./data.js";
+import {Cubie, getLettersGroup, getRandomLetterGroup} from "./rubiks.js";
 
-let controls, renderer, scene, letter_font, camera, cube_positions;
-let lettersGroups;
+// Variables
+let controls, renderer, scene, letter_font, camera, lettersGroups;
+let cubies = {}
 let nameToGuess = "";
+let score = [0, 0];
+
+// DOM Elements
 let letters_toggle = document.getElementsByClassName("letters-toggle");
 let result = document.getElementById("result");
 let stats = document.getElementById("stats");
-let score = [0, 0];
 
+// Loading Assets and Start
 let manager = new THREE.LoadingManager();
 manager.onLoad = function() {
   init();
   animate();
 }
-
 const loader = new THREE.FontLoader(manager);
 loader.load('fonts/LEMON MILK_Regular.json', function (font) {
   letter_font = font;
 });
 
+// Initialise
 function init() {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -27,8 +31,8 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  // Initialise Cube
-  cube_positions = initialCube(scene);
+  // Create Cube
+  initialiseCube();
 
   // Get Label Groups but don't add to scene
   lettersGroups = {
@@ -38,12 +42,20 @@ function init() {
   }
 
   // Set Camera
-  camera.position.set(CUBE_STARTING_POSE.x, CUBE_STARTING_POSE.y, CUBE_STARTING_POSE.z);
+  camera.position.copy(CUBE_STARTING_POSE);
   camera.lookAt(new THREE.Vector3(0, 0, 0));
 
   // Add Orbit Controls
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.update();
+
+  // Axis Helper
+  const axesHelper = new THREE.AxesHelper(20);
+  scene.add(axesHelper);
+
+  window.turn = turn;
+  window.scene = scene;
+  window.cubies = cubies;
 }
 
 function animate() {
@@ -52,6 +64,16 @@ function animate() {
   TWEEN.update();
   renderer.render(scene, camera);
 }
+
+function initialiseCube() {
+  let cubie;
+  for (const [cubieID, cubieData] of Object.entries(CUBIE_DATA)) {
+    cubie = Cubie(cubieID, cubieData);
+    cubies[cubieID] = cubie;
+    scene.add(cubie);
+  }
+}
+
 
 function randomLetter() {
   // Turn off letter switches
@@ -68,7 +90,7 @@ function randomLetter() {
   scene.add(lettersGroups["random"]);
 
   // Camera Move
-  new TWEEN.Tween(camera.position).to(CUBE_POSES[cubeFace], 500).start();
+  new TWEEN.Tween(camera.position).to(CUBE_DATA[cubeFace]['pose'], 500).start();
 }
 
 function clearRandomLetter() {
@@ -134,4 +156,51 @@ function updateScore() {
     percentage = 0;
   }
   stats.innerText = `${correct} of ${total} correct (${percentage}%)`
+}
+
+
+function getCubies(cubeFace) {
+  let cubie_group = new THREE.Group();
+  scene.add(cubie_group);
+  let cubieIDs = CUBE_DATA[cubeFace]['cubies'];
+  for (let i = 0; i < cubieIDs.length; i++) {
+    // Need to attach rather than add so we don't lose rotation/position data
+    cubie_group.attach(cubies[cubieIDs[i]]);
+  }
+  return cubie_group;
+}
+
+function updateCubies(cubeFace, turnType) {
+  let newCubies = {}
+  let swaps = TURN_CUBIE_SWAPS[turnType];
+  let faceCubies = CUBE_DATA[cubeFace]['cubies']
+  let pos;
+  for (const [cubieID, cubie] of Object.entries(cubies)) {
+    pos = faceCubies.indexOf(parseInt(cubieID));
+    if (pos === -1) {
+      // Not on Face - no change
+      newCubies[cubieID] = cubie;
+    } else {
+      // On Face - will be moved
+      newCubies[cubieID] = cubies[faceCubies[swaps[pos]]];
+    }
+  }
+  cubies = newCubies;
+}
+
+function turn(action) {
+  let cubeFace = action;
+  let turn_type = 'normal';
+  if (action.length === 2) {
+    if (action.substring(1) === "'") {
+      turn_type = 'reverse';
+    } else if (action.substring(1) === '2') {
+      turn_type = 'double';
+    }
+    cubeFace = action.substring(0, 1);
+  }
+  let angle = TURN_ANGLES[turn_type];
+  let normal = CUBE_DATA[cubeFace]['normal'];
+  getCubies(cubeFace).rotateOnAxis(normal, angle);
+  updateCubies(cubeFace, turn_type);
 }

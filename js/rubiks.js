@@ -1,22 +1,12 @@
 import {
   CUBE_LETTER_COLOR,
-  CUBE_DATA,
+  CUBIE_DATA,
   CUBE_EDGE_LENGTH,
-  CUBE_FACE_EULERS,
-  CUBE_FACE_NORMALS,
+  CUBE_DATA,
   guessList,
 } from "./data.js";
 
-export function initialCube(scene) {
-  let positions = {};
-  let cubie;
-  for (const [cubeID, cubeData] of Object.entries(CUBE_DATA)) {
-    cubie = Cubie(cubeID, cubeData);
-    scene.add(cubie);
-    positions[cubeID] = cubie;
-  }
-  return positions;
-}
+
 
 var vertexShader = `
     varying vec3 vPos;
@@ -46,12 +36,12 @@ var fragmentShader = `
   `;
 
 
-function Cubie(cubeID, cubeData) {
+export function Cubie(cubieID, cubieData) {
 
   let geo_cube = new THREE.BoxBufferGeometry(CUBE_EDGE_LENGTH, CUBE_EDGE_LENGTH, CUBE_EDGE_LENGTH);
 
   let materials = []
-  for (let i=0; i < cubeData.colors.length; i++) {
+  for (let i=0; i < cubieData.colors.length; i++) {
     let material = new THREE.ShaderMaterial({
       uniforms: {
         size: {
@@ -63,31 +53,26 @@ function Cubie(cubeID, cubeData) {
         smoothness: {
           value: 0.2
         },
-        color: {type: 'vec3', value: new THREE.Color(cubeData.colors[i])},
+        color: {type: 'vec3', value: new THREE.Color(cubieData.colors[i])},
       },
       vertexShader: vertexShader,
       fragmentShader: fragmentShader
     });
     materials.push(material);
   }
-
   let cube = new THREE.Mesh(geo_cube, materials);
-  cube.name = cubeID;
-  cube.position.copy(cubeData.position);
+  cube.name = cubieID;
+  cube.position.copy(cubieData.position);
   return cube;
 }
 
 export function getLettersGroup(letter_font, selectedCubieType) {
   let letters = new THREE.Group();
-  let name;
-  let cubieType;
-  for (const [cubeID, cubeData] of Object.entries(CUBE_DATA)) {
-    cubieType = cubeData.type;
-    for (let cubeFace = 0; cubeFace < cubeData.names.length; cubeFace++) {
-      name = cubeData.names[cubeFace];
+  for (const [cubieID, cubieData] of Object.entries(CUBIE_DATA)) {
+    for (const [cubeFace, name] of Object.entries(cubieData.names)) {
       if (name) {
-        if (cubieType === selectedCubieType) {
-          letters.add(Letter(letter_font, name, cubeData.position, cubeFace, cubieType));
+        if (cubieData.type === selectedCubieType) {
+          letters.add(Letter(letter_font, name, cubieData.position, cubeFace, cubieData.type));
         }
       }
     }
@@ -105,39 +90,15 @@ function Letter(letter_font, name, cubePosition, cubeFace, cubieType) {
   let letter = new THREE.Mesh(geo_text, new THREE.MeshBasicMaterial({color: CUBE_LETTER_COLOR}));
   letter.name = `${cubieType}${name}`;
   letter.position.copy(cubePosition);
-  letter.translateOnAxis(CUBE_FACE_NORMALS[cubeFace], CUBE_EDGE_LENGTH * 0.5);
-  letter.setRotationFromEuler(CUBE_FACE_EULERS[cubeFace]);
+  letter.translateOnAxis(CUBE_DATA[cubeFace]['normal'], CUBE_EDGE_LENGTH * 0.5);
+  letter.setRotationFromEuler(CUBE_DATA[cubeFace]['letter_rotation']);
   return letter;
 }
-
-// function weightedRandom() {
-//   // Simple Random
-//   // return guessList[Math.floor(Math.random() * guessList.length)];
-//
-//   // Weighted Random
-//   // https://blobfolio.com/2019/randomizing-weighted-choices-in-javascript/
-//
-//   let total = 1;
-//   for (let i = 0; i < guessList.length; ++i) {
-//     total += guessList[i].weighting;
-//   }
-//
-//   const threshold = Math.floor(Math.random() * total);
-//
-//   total = 0;
-//   for (let i = 0; i < guessList.length; ++i) {
-//     total += guessList[i].weighting;
-//     if (total >= threshold) {
-//       return guessList[i];
-//     }
-//   }
-//
-// }
 
 export function getRandomLetterGroup(letter_font) {
   let letters = new THREE.Group();
   let randomLetter = guessList[Math.floor(Math.random() * guessList.length)];
-  console.log(randomLetter.name, randomLetter.cubeID, randomLetter.cubeFace);
+  console.log(`CubeID: ${randomLetter.cubieID} Face: ${randomLetter.cubeFace} -- Answer: ${randomLetter.name}`)
   letters.add(Letter(letter_font, "?", randomLetter.cubePosition, randomLetter.cubeFace, "random"));
   return [letters, randomLetter.name, randomLetter.cubeFace];
 }
