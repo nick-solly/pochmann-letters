@@ -7,12 +7,15 @@ import {
   guessList,
 } from "./data.js";
 
-export function getCubeGroup() {
-  let cubies = new THREE.Group();
+export function initialCube(scene) {
+  let positions = {};
+  let cubie;
   for (const [cubeID, cubeData] of Object.entries(CUBE_DATA)) {
-    cubies.add(Cubie(cubeID, cubeData));
+    cubie = Cubie(cubeID, cubeData);
+    scene.add(cubie);
+    positions[cubeID] = cubie;
   }
-  return cubies;
+  return positions;
 }
 
 var vertexShader = `

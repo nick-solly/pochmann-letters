@@ -1,7 +1,7 @@
 import {CUBE_POSES, CUBE_STARTING_POSE} from "./data.js";
-import {getCubeGroup, getLettersGroup, getRandomLetterGroup} from "./rubiks.js";
+import {initialCube, getLettersGroup, getRandomLetterGroup} from "./rubiks.js";
 
-let controls, renderer, scene, letter_font, camera;
+let controls, renderer, scene, letter_font, camera, cube_positions;
 let lettersGroups;
 let nameToGuess = "";
 let letters_toggle = document.getElementsByClassName("letters-toggle");
@@ -27,9 +27,8 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  // Add Objects
-  let cubeGroup = getCubeGroup();
-  scene.add(cubeGroup);
+  // Initialise Cube
+  cube_positions = initialCube(scene);
 
   // Get Label Groups but don't add to scene
   lettersGroups = {
