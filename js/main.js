@@ -11,7 +11,8 @@ let nameToGuess = "";
 let score = [0, 0];
 
 // DOM Elements
-let letters_toggle = document.getElementsByClassName("letters-toggle");
+let lettersToggle = document.querySelectorAll('.letters-toggle');
+let turnButtons = document.querySelectorAll('#turn-btns button');
 let result = document.getElementById("result");
 let stats = document.getElementById("stats");
 
@@ -53,8 +54,8 @@ function init() {
   controls.update();
 
   // Axis Helper
-  const axesHelper = new THREE.AxesHelper(20);
-  scene.add(axesHelper);
+  // const axesHelper = new THREE.AxesHelper(20);
+  // scene.add(axesHelper);
 
   // Create Tween Queue
   window.cubies = cubies;
@@ -83,9 +84,9 @@ function initialiseCube() {
 
 function randomLetter() {
   // Turn off letter switches
-  for (let i = 0; i < letters_toggle.length; i++) {
-    letters_toggle[i].checked = false;
-  }
+  lettersToggle.forEach(item => {
+    item.checked = false;
+  });
   // Remove all existing letters
   for (const [groupName, group] of Object.entries(lettersGroups)) {
     scene.remove(group);
@@ -106,8 +107,8 @@ function clearRandomLetter() {
 }
 
 // Event Handler for Toggle Switches
-for (let i = 0; i < letters_toggle.length; i++) {
-  letters_toggle[i].addEventListener("change", function () {
+lettersToggle.forEach(item => {
+  item.addEventListener("change", function () {
     let letterGroup = lettersGroups[this.dataset.lettergroup];
     if (this.checked) {
       scene.add(letterGroup);
@@ -115,7 +116,7 @@ for (let i = 0; i < letters_toggle.length; i++) {
       scene.remove(letterGroup);
     }
   });
-}
+});
 
 // Event Handler for Quiz
 document.getElementById("quiz").addEventListener("click", function () {
@@ -163,3 +164,10 @@ function updateScore() {
   }
   stats.innerText = `${correct} of ${total} correct (${percentage}%)`
 }
+
+// Turn Buttons
+turnButtons.forEach(item => {
+  item.addEventListener("click", function () {
+    queue.add(this.innerText);
+  });
+});

@@ -25,29 +25,56 @@
 
   <body>
     <div id="result" class="hidden"></div>
-    <div class="options-group">
-      <div class="switch-block">
-        <label class="switch">
-          <input class="letters-toggle" data-lettergroup="corner" type="checkbox">
-          <span class="slider round"></span>
-        </label>
-        <span class="switch-text">
-          Show Corner Labels
-        </span>
+    <div id="settings">
+      <div class="settings-section">
+        <span class="heading">Labels</span>
+        <div class="switch-block">
+          <label class="switch">
+            <input class="letters-toggle" data-lettergroup="corner" type="checkbox">
+            <span class="slider round"></span>
+          </label>
+          <span class="switch-text">Corners</span>
+          <label class="switch">
+            <input class="letters-toggle" data-lettergroup="edge" type="checkbox">
+            <span class="slider round"></span>
+          </label>
+          <span class="switch-text">Edges</span>
+        </div>
       </div>
-      <div class="switch-block">
-        <label class="switch">
-          <input class="letters-toggle" data-lettergroup="edge" type="checkbox">
-          <span class="slider round"></span>
-        </label>
-        <span class="switch-text">
-          Show Edge Labels
-        </span>
+      <div class="settings-section" id="turn-btns">
+        <span class="heading">Turns</span>
+        <div class="btn-group">
+          <button>U</button>
+          <button>L</button>
+          <button>F</button>
+          <button>R</button>
+          <button>B</button>
+          <button>D</button>
+        </div>
+        <div class="btn-group">
+          <button>U'</button>
+          <button>L'</button>
+          <button>F'</button>
+          <button>R'</button>
+          <button>B'</button>
+          <button>D'</button>
+        </div>
+        <div class="btn-group">
+          <button>U2</button>
+          <button>L2</button>
+          <button>F2</button>
+          <button>R2</button>
+          <button>B2</button>
+          <button>D2</button>
+        </div>
       </div>
-      <div class="btn-group">
-        <button id="quiz">Start Quiz</button>
+      <div class="settings-section">
+        <span class="heading">Training</span>
+        <div class="btn-group">
+          <button id="quiz">Letters Quiz</button>
+        </div>
+        <div id="stats" class="hidden"></div>
       </div>
-      <div id="stats" class="hidden"></div>
     </div>
 
     <script src="js/vendor/modernizr-3.11.2.min.js"></script>

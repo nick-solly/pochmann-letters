@@ -1,11 +1,7 @@
-.options-group {
+#settings {
   position: absolute;
-  top: 15px;
+  top: 10px;
   left: 20px;
-}
-
-.switch-text {
-  color: white;
 }
 
 .switch {
@@ -17,6 +13,10 @@
 
 .switch-block:not(:first-child) {
   margin-top: 5px;
+}
+
+.switch-block .switch:not(:first-child) {
+  margin-left: 10px;
 }
 
 /* Hide default HTML checkbox */
@@ -74,14 +74,18 @@ input:checked + .slider:before {
 }
 
 .btn-group button {
-  margin-top: 5px;
   background-color: #2196F3;
   border: 1px solid #2196F3;
   border-radius: 5px;
   color: white;
-  padding: 6px 18px;
+  padding: 6px 12px;
+  margin-right: 5px;
   cursor: pointer;
   float: left;
+}
+
+.btn-group:not(:first-child) {
+  margin-top: 5px;
 }
 
 .btn-group button:not(:last-child) {
@@ -98,6 +102,11 @@ input:checked + .slider:before {
 /* Add a background color on hover */
 .btn-group button:hover {
   background-color: #0d3e62;
+}
+
+#turn-btns button {
+  width: 42px;
+  padding: 6px 0;
 }
 
 @font-face {
@@ -136,4 +145,14 @@ input:checked + .slider:before {
 #stats {
   margin-top: 5px;
   color: white;
+}
+
+.settings-section {
+  margin-top: 5px;
+  background-color: #FFFFFF;
+  padding: 5px;
+}
+
+.settings-section .heading {
+  font-weight: bold;
 }
