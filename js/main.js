@@ -1,8 +1,11 @@
-import {CUBE_DATA, CUBE_STARTING_POSE, CUBIE_DATA, TURN_ANGLES, TURN_CUBIE_SWAPS} from "./data.js";
+'use strict';
+
+import {CUBE_DATA, CUBE_STARTING_POSE, CUBIE_DATA} from "./data.js";
 import {Cubie, getLettersGroup, getRandomLetterGroup} from "./rubiks.js";
+import {TurnQueue} from "./queue.js";
 
 // Variables
-let controls, renderer, scene, letter_font, camera, lettersGroups;
+let controls, renderer, scene, letter_font, camera, lettersGroups, queue;
 let cubies = {}
 let nameToGuess = "";
 let score = [0, 0];
@@ -53,9 +56,12 @@ function init() {
   const axesHelper = new THREE.AxesHelper(20);
   scene.add(axesHelper);
 
-  window.turn = turn;
-  window.scene = scene;
+  // Create Tween Queue
   window.cubies = cubies;
+  queue = new TurnQueue();
+
+  window.scene = scene;
+  window.queue = queue;
 }
 
 function animate() {
@@ -156,51 +162,4 @@ function updateScore() {
     percentage = 0;
   }
   stats.innerText = `${correct} of ${total} correct (${percentage}%)`
-}
-
-
-function getCubies(cubeFace) {
-  let cubie_group = new THREE.Group();
-  scene.add(cubie_group);
-  let cubieIDs = CUBE_DATA[cubeFace]['cubies'];
-  for (let i = 0; i < cubieIDs.length; i++) {
-    // Need to attach rather than add so we don't lose rotation/position data
-    cubie_group.attach(cubies[cubieIDs[i]]);
-  }
-  return cubie_group;
-}
-
-function updateCubies(cubeFace, turnType) {
-  let newCubies = {}
-  let swaps = TURN_CUBIE_SWAPS[turnType];
-  let faceCubies = CUBE_DATA[cubeFace]['cubies']
-  let pos;
-  for (const [cubieID, cubie] of Object.entries(cubies)) {
-    pos = faceCubies.indexOf(parseInt(cubieID));
-    if (pos === -1) {
-      // Not on Face - no change
-      newCubies[cubieID] = cubie;
-    } else {
-      // On Face - will be moved
-      newCubies[cubieID] = cubies[faceCubies[swaps[pos]]];
-    }
-  }
-  cubies = newCubies;
-}
-
-function turn(action) {
-  let cubeFace = action;
-  let turn_type = 'normal';
-  if (action.length === 2) {
-    if (action.substring(1) === "'") {
-      turn_type = 'reverse';
-    } else if (action.substring(1) === '2') {
-      turn_type = 'double';
-    }
-    cubeFace = action.substring(0, 1);
-  }
-  let angle = TURN_ANGLES[turn_type];
-  let normal = CUBE_DATA[cubeFace]['normal'];
-  getCubies(cubeFace).rotateOnAxis(normal, angle);
-  updateCubies(cubeFace, turn_type);
 }

@@ -1,3 +1,4 @@
+'use strict';
 // White Top, Green Front
 // CubieIDs:
 // Top Layer
@@ -35,6 +36,7 @@ const CUBE_ORANGE = "#FFA500";
 export const CUBE_LETTER_COLOR = "#000000";
 
 export const CUBE_EDGE_LENGTH = 5;
+export const TURN_TIME = 2000;
 
 export const TURN_CUBIE_SWAPS = {
   'normal': [6, 3, 0, 7, 4, 1, 8, 5, 2],
