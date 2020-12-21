@@ -21,7 +21,7 @@ class TweenTurn {
 
   getCubies(cubeFace) {
     let cubieGroup = new THREE.Group();
-    scene.add(cubieGroup);
+    window.scene.add(cubieGroup);
     let cubieIDs = CUBE_DATA[cubeFace]['cubies'];
     for (let i = 0; i < cubieIDs.length; i++) {
       // Need to attach rather than add so we don't lose rotation/position data
@@ -79,8 +79,14 @@ export class TurnQueue {
     let startQueue = (this.turnQueue.length ? false : true);
     this.turnQueue.push(tween);
     if (startQueue) {
-      console.log(`Empty Queue: Starting Tween ${this.turnQueue[0]._id}`);
+      console.log(`Empty Queue: Starting Turn ${this.turnQueue[0].action}`);
       this.turnQueue[0].start();
+    }
+  }
+  algorithm(alg) {
+    const turns = alg.split(' ');
+    for (let i = 0; i < turns.length; i++) {
+      this.add(turns[i]);
     }
   }
 }

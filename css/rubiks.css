@@ -130,6 +130,27 @@ input:checked + .slider:before {
   text-align: center;
 }
 
+#scramble-wrapper {
+  position: absolute;
+  margin: auto;
+  bottom: 30px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  cursor: default;
+  text-align: center;
+}
+
+#scramble {
+  display: inline-block;
+  background-color: white;
+  padding: 5px 10px;
+  border-radius: 2px;
+  color: black;
+  font-family: 'lemonmilk', Arial, sans-serif;
+  font-size: 40px;
+}
+
 .hidden {
   display: none;
 }
@@ -155,4 +176,8 @@ input:checked + .slider:before {
 
 .settings-section .heading {
   font-weight: bold;
+}
+
+button[disabled] {
+  cursor: wait;
 }

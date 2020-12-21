@@ -6,7 +6,7 @@ import {TurnQueue} from "./queue.js";
 
 // Variables
 let controls, renderer, scene, letter_font, camera, lettersGroups, queue;
-let cubies = {}
+let cubies = {};
 let nameToGuess = "";
 let score = [0, 0];
 
@@ -19,6 +19,9 @@ let stats = document.getElementById("stats");
 // Loading Assets and Start
 let manager = new THREE.LoadingManager();
 manager.onLoad = function() {
+  Cube.asyncInit('js/cubejs/worker.js', function() {
+      document.getElementById("btn-scramble").removeAttribute("disabled");
+  })
   init();
   animate();
 }
@@ -72,6 +75,23 @@ function animate() {
   renderer.render(scene, camera);
 }
 
+function resetCube() {
+  hideScramble();
+  let originalCubieData, originalCubieID;
+  let newCubies = {};
+  for (const [cubieID, cubie] of Object.entries(cubies)) {
+    originalCubieID = cubie.name;
+    scene.attach(cubie);
+    originalCubieData = CUBIE_DATA[originalCubieID];
+    // console.log(cubieID, cubie.position, originalCubieData.position)
+    cubie.position.copy(originalCubieData.position);
+    // console.log(cubieID, cubie.rotation);
+    cubie.rotation.set(0, 0, 0);
+    newCubies[originalCubieID] = cubie;
+  }
+  window.cubies = newCubies;
+}
+
 function initialiseCube() {
   let cubie;
   for (const [cubieID, cubieData] of Object.entries(CUBIE_DATA)) {
@@ -80,7 +100,6 @@ function initialiseCube() {
     scene.add(cubie);
   }
 }
-
 
 function randomLetter() {
   // Turn off letter switches
@@ -170,4 +189,21 @@ turnButtons.forEach(item => {
   item.addEventListener("click", function () {
     queue.add(this.innerText);
   });
+});
+
+document.getElementById("btn-scramble").addEventListener("click", function () {
+  Cube.asyncScramble(function(algorithm) {
+      resetCube();
+      document.getElementById("scramble").innerText = algorithm;
+      document.getElementById("scramble-wrapper").className = '';
+      queue.algorithm(algorithm);
+  });
+});
+
+function hideScramble () {
+  document.getElementById("scramble-wrapper").className = 'hidden';
+}
+
+document.getElementById("btn-reset").addEventListener("click", function () {
+  resetCube();
 });
